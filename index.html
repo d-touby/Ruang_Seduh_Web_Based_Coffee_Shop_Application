@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ruang Seduh — Kopi yang punya waktu untukmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<style>
+  :root{
+    --bg:#F6EFE4;
+    --surface:#FFFDF8;
+    --surface-2:#EFE5D3;
+    --text:#241C1A;
+    --text-muted:#7A6A5C;
+    --brand:#5B3A29;
+    --accent:#B5651D;
+    --accent-2:#8A9A73;
+    --line:#E3D6C0;
+    --danger:#B23A2E;
+    --shadow: 0 1px 2px rgba(36,28,26,0.06), 0 8px 24px rgba(36,28,26,0.06);
+    --radius: 14px;
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1C1613;
+      --surface:#241C19;
+      --surface-2:#2E241F;
+      --text:#F3E9DD;
+      --text-muted:#B6A292;
+      --brand:#D9A66C;
+      --accent:#E08A46;
+      --accent-2:#9FB587;
+      --line:#3A2E27;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1C1613;
+    --surface:#241C19;
+    --surface-2:#2E241F;
+    --text:#F3E9DD;
+    --text-muted:#B6A292;
+    --brand:#D9A66C;
+    --accent:#E08A46;
+    --accent-2:#9FB587;
+    --line:#3A2E27;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.3);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  #root{min-height:100vh;display:flex;flex-direction:column;}
+  h1,h2,h3,.serif{font-family:var(--serif);}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:var(--sans);}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+  .container-scroll{overflow-x:auto;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+  ::selection{background:var(--accent);color:#fff;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 22px;border-radius:999px;border:1px solid transparent;
+    font-weight:600;font-size:14.5px;cursor:pointer;transition:transform .15s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    line-height:1;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--brand);color:#fff;}
+  .btn-primary:hover{background:var(--accent);}
+  .btn-outline{background:transparent;color:var(--text);border-color:var(--line);}
+  .btn-outline:hover{border-color:var(--brand);}
+  .btn-ghost{background:transparent;color:var(--text-muted);padding:8px 12px;}
+  .btn-ghost:hover{color:var(--text);}
+  .btn-sm{padding:8px 16px;font-size:13px;}
+  .btn-full{width:100%;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
+  .field input, .field select, .field textarea{
+    width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--surface);color:var(--text);font-size:14.5px;font-family:var(--sans);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .field .err{color:var(--danger);font-size:12.5px;margin-top:4px;}
+  .field.has-err input, .field.has-err textarea{border-color:var(--danger);}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;letter-spacing:.2px;}
+  .badge-best{background:#3D2B1F;color:#F3E4D0;}
+  .badge-new{background:var(--accent-2);color:#1E2A17;}
+  .badge-off{background:var(--danger);color:#fff;}
+  .toast-wrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;width:100%;padding:0 16px;}
+  .toast{background:var(--text);color:var(--bg);padding:11px 18px;border-radius:999px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow);max-width:92vw;}
+  .skeleton{background:linear-gradient(90deg,var(--surface-2) 25%,var(--line) 37%,var(--surface-2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:10px;}
+  @keyframes shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+  .grid-products{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  @media (max-width:1000px){.grid-products{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:720px){.grid-products{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:460px){.grid-products{grid-template-columns:1fr 1fr;gap:10px;}}
+  .scrollx{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;}
+  .scrollx::-webkit-scrollbar{height:6px;}
+  .scrollx::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useMemo,useRef,useCallback,createContext,useContext} = React;
+
+/* ---------------------------------------------------------
+   DATA — mock catalog & content. In a real backend this would
+   come from a /products, /articles, /reviews API.
+--------------------------------------------------------- */
+const CATS = [
+  {id:'coffee', label:'Coffee', icon:'☕'},
+  {id:'non-coffee', label:'Non-Coffee', icon:'🥤'},
+  {id:'tea', label:'Tea', icon:'🍵'},
+  {id:'pastry', label:'Pastry', icon:'🥐'},
+  {id:'dessert', label:'Dessert', icon:'🍰'},
+  {id:'snacks', label:'Snacks', icon:'🥨'},
+];
+const catIcon = id => (CATS.find(c=>c.id===id)||{}).icon || '☕';
+const catLabel = id => (CATS.find(c=>c.id===id)||{}).label || id;
+
+const PRODUCTS = [
+  {id:1,name:'Kopi Susu Gula Aren',category:'coffee',price:22000,rating:4.8,reviews:212,isBestSeller:true,isNew:false,discount:0,desc:'Espresso rumahan dipadukan susu segar dan gula aren asli — manis lembut, pahit yang pas.'},
+  {id:2,name:'Americano Ruang',category:'coffee',price:19000,rating:4.6,reviews:98,isBestSeller:false,isNew:false,discount:0,desc:'Espresso murni dengan air panas, untuk yang suka rasa kopi apa adanya.'},
+  {id:3,name:'Cappuccino Klasik',category:'coffee',price:25000,rating:4.7,reviews:150,isBestSeller:true,isNew:false,discount:0,desc:'Espresso, susu steamed, dan foam tebal dengan taburan bubuk kayu manis.'},
+  {id:4,name:'Piccolo Latte',category:'coffee',price:23000,rating:4.5,reviews:64,isBestSeller:false,isNew:true,discount:0,desc:'Versi mini latte, shot espresso ganda dengan sedikit susu — pekat dan ringkas.'},
+  {id:5,name:'Kopi Tubruk Nusantara',category:'coffee',price:16000,rating:4.4,reviews:41,isBestSeller:false,isNew:false,discount:0,desc:'Kopi robusta lokal diseduh tubruk, disajikan dengan gula batu terpisah.'},
+  {id:6,name:'Butterscotch Latte',category:'coffee',price:27000,rating:4.6,reviews:88,isBestSeller:false,isNew:false,discount:15,desc:'Latte dengan sirup butterscotch house-made, manis karamel yang hangat.'},
+  {id:7,name:'Matcha Latte',category:'non-coffee',price:26000,rating:4.7,reviews:120,isBestSeller:true,isNew:false,discount:0,desc:'Matcha ceremonial grade dikocok dengan susu dingin, pahit-manis seimbang.'},
+  {id:8,name:'Choco Malt',category:'non-coffee',price:24000,rating:4.5,reviews:70,isBestSeller:false,isNew:false,discount:0,desc:'Cokelat Belgia dan malt susu, creamy tanpa kafein.'},
+  {id:9,name:'Taro Fresh Milk',category:'non-coffee',price:23000,rating:4.4,reviews:35,isBestSeller:false,isNew:true,discount:0,desc:'Susu segar dengan pasta taro asli, warna ungu lembut alami.'},
+  {id:10,name:'Lemon Tea Segar',category:'tea',price:18000,rating:4.3,reviews:52,isBestSeller:false,isNew:false,discount:0,desc:'Teh hitam diseduh perlahan dengan perasan lemon segar, tidak terlalu manis.'},
+  {id:11,name:'Chamomile Hangat',category:'tea',price:20000,rating:4.6,reviews:29,isBestSeller:false,isNew:false,discount:0,desc:'Teh bunga chamomile untuk menenangkan sore hari, disajikan hangat.'},
+  {id:12,name:'Thai Tea Ruang',category:'tea',price:21000,rating:4.5,reviews:66,isBestSeller:false,isNew:false,discount:10,desc:'Teh Thailand dengan krimer khas dan gula aren, rasa gurih-manis autentik.'},
+  {id:13,name:'Croissant Butter',category:'pastry',price:19000,rating:4.7,reviews:140,isBestSeller:true,isNew:false,discount:0,desc:'Dipanggang setiap pagi, berlapis-lapis dengan mentega Prancis.'},
+  {id:14,name:'Pain au Chocolat',category:'pastry',price:21000,rating:4.6,reviews:77,isBestSeller:false,isNew:false,discount:0,desc:'Croissant isi cokelat batangan ganda, renyah di luar lembut di dalam.'},
+  {id:15,name:'Banana Bread',category:'pastry',price:17000,rating:4.4,reviews:38,isBestSeller:false,isNew:true,discount:0,desc:'Roti pisang lembap dengan potongan kenari panggang.'},
+  {id:16,name:'Basque Burnt Cheesecake',category:'dessert',price:32000,rating:4.9,reviews:203,isBestSeller:true,isNew:false,discount:0,desc:'Permukaan gosong khas, tekstur creamy meleleh di mulut.'},
+  {id:17,name:'Tiramisu Cup',category:'dessert',price:28000,rating:4.7,reviews:95,isBestSeller:false,isNew:false,discount:0,desc:'Lapisan biskuit rendam kopi dan mascarpone lembut dalam cup praktis.'},
+  {id:18,name:'French Fries Truffle',category:'snacks',price:24000,rating:4.5,reviews:58,isBestSeller:false,isNew:false,discount:0,desc:'Kentang goreng renyah dengan taburan truffle oil dan parmesan.'},
+  {id:19,name:'Chicken Popcorn',category:'snacks',price:26000,rating:4.6,reviews:63,isBestSeller:false,isNew:false,discount:20,desc:'Potongan ayam crispy ukuran gigitan, disajikan dengan saus mayo pedas.'},
+  {id:20,name:'Edamame Garlic Butter',category:'snacks',price:18000,rating:4.3,reviews:22,isBestSeller:false,isNew:true,discount:0,desc:'Edamame rebus ditumis mentega bawang putih, camilan sehat teman ngopi.'},
+];
+
+const SIZE_OPTS = [{id:'r',label:'Regular',add:0},{id:'l',label:'Large',add:5000}];
+const TEMP_OPTS = [{id:'ice',label:'Ice'},{id:'hot',label:'Hot'}];
+const SUGAR_OPTS = [{id:'100',label:'Normal'},{id:'50',label:'Setengah'},{id:'0',label:'Tanpa gula'}];
+const ICE_OPTS = [{id:'100',label:'Normal'},{id:'50',label:'Sedikit'},{id:'0',label:'Tanpa es'}];
+const TOPPING_OPTS = [{id:'boba',label:'Boba',add:5000},{id:'oat',label:'Ganti Oat Milk',add:6000},{id:'extra',label:'Extra Shot',add:7000}];
+
+const ARTICLES = [
+  {id:1,title:'Cara Memilih Biji Kopi yang Tepat',cat:'Panduan',read:'5 menit',date:'2026-08-02',excerpt:'Dari asal daerah, tingkat sangrai, sampai tanggal roasting — ini yang perlu diperhatikan sebelum membeli biji kopi.',body:'Memilih biji kopi bukan sekadar soal merek. Perhatikan tanggal roasting — idealnya diminum dalam 2-4 minggu setelah disangrai agar rasa masih segar. Perhatikan juga tingkat sangrai: light roast cenderung asam dan fruity, sedangkan dark roast lebih pahit dan bold. Terakhir, tanyakan asal biji — kopi dari dataran tinggi biasanya punya keasaman yang lebih kompleks.'},
+  {id:2,title:'Perbedaan Arabica dan Robusta',cat:'Edukasi',read:'4 menit',date:'2026-08-10',excerpt:'Dua jenis biji kopi paling umum ini punya karakter rasa, kadar kafein, dan cara tanam yang berbeda jauh.',body:'Arabica tumbuh di dataran tinggi, rasanya lebih halus dengan keasaman yang jelas dan kadar kafein lebih rendah. Robusta tumbuh di dataran rendah, rasanya lebih pahit dan earthy dengan kadar kafein hampir dua kali lipat arabica. Robusta sering dipakai untuk kopi tubruk dan espresso blend karena crema-nya yang lebih tebal.'},
+  {id:3,title:'Apa Itu Espresso, Sebenarnya?',cat:'Edukasi',read:'3 menit',date:'2026-08-18',excerpt:'Espresso bukan jenis biji kopi, melainkan metode ekstraksi menggunakan tekanan tinggi.',body:'Espresso dibuat dengan memaksa air panas melewati kopi bubuk halus dengan tekanan sekitar 9 bar. Hasilnya adalah shot pekat dengan lapisan crema di atasnya. Semua menu seperti latte, cappuccino, dan macchiato berbasis dari shot espresso ini, hanya beda rasio susu dan foam-nya.'},
+  {id:4,title:'Panduan Manual Brewing untuk Pemula',cat:'Panduan',read:'6 menit',date:'2026-08-25',excerpt:'V60, French Press, atau Aeropress? Kenali karakter masing-masing sebelum memulai di rumah.',body:'V60 menghasilkan rasa yang bersih dan menonjolkan keasaman. French press menghasilkan body yang lebih tebal karena filter logam meloloskan minyak kopi. Aeropress fleksibel dan cepat, cocok untuk eksperimen rasio. Mulailah dengan rasio 1:15 (kopi:air) lalu sesuaikan sesuai selera.'},
+  {id:5,title:'5 Tips Menyeduh Kopi Lebih Enak di Rumah',cat:'Tips',read:'4 menit',date:'2026-09-01',excerpt:'Kualitas air, kesegaran giling, dan suhu seduh ternyata berpengaruh besar pada rasa akhir.',body:'Gunakan air bersih tanpa bau kaporit. Giling biji kopi sesaat sebelum diseduh, bukan jauh-jauh hari. Jaga suhu air di 90-96°C, terlalu panas membuat kopi pahit gosong. Timbang kopi dan air, jangan hanya mengira-ngira. Terakhir, catat rasio yang enak menurutmu supaya bisa diulang.'},
+];
+
+const REVIEW_SEED = [
+  {id:1,name:'Dinda A.',rating:5,date:'2026-09-10',text:'Kopi susu gula arennya juara, manisnya pas dan tempatnya nyaman buat kerja.'},
+  {id:2,name:'Fajar R.',rating:4,date:'2026-09-08',text:'Basque cheesecake-nya enak banget, cuma agak lama nunggu pas ramai.'},
+  {id:3,name:'Sinta P.',rating:5,date:'2026-09-05',text:'Wifi kenceng, colokan banyak, cocok buat WFC seharian.'},
+];
+
+const PROMOS = [
+  {id:1,title:'Diskon 20% Kopi Susu',type:'Discount',desc:'Semua varian kopi susu diskon 20% setiap hari Senin.',tag:'Setiap Senin'},
+  {id:2,title:'Buy 1 Get 1 Americano',type:'BOGO',desc:'Beli satu Americano, gratis satu untukmu atau temanmu.',tag:'Jam 08.00–11.00'},
+  {id:3,title:'Bundle Ngopi Pagi',type:'Bundle',desc:'Kopi pilihan + croissant hanya Rp 32.000, hemat hingga Rp 9.000.',tag:'Sampai jam 11.00'},
+  {id:4,title:'Menu Musiman: Es Kopi Kelapa',type:'Seasonal',desc:'Kopi dingin dengan air kelapa asli, tersedia edisi terbatas bulan ini.',tag:'Edisi Terbatas'},
+  {id:5,title:'Member Dapat Poin 2x',type:'Membership',desc:'Daftar member gratis dan kumpulkan poin dua kali lipat tiap transaksi.',tag:'Untuk Member'},
+];
+
+const fmtRp = n => 'Rp' + n.toLocaleString('id-ID');
+
+/* ---------------------------------------------------------
+   PERSISTENCE HELPERS — thin wrapper around localStorage so
+   the rest of the app never touches window.localStorage directly.
+--------------------------------------------------------- */
+function loadLS(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveLS(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* storage full or blocked — fail silently */ }
+}
+
+/* ---------------------------------------------------------
+   GLOBAL CONTEXTS
+--------------------------------------------------------- */
+const ToastCtx = createContext(null);
+function ToastProvider({children}){
+  const [toasts,setToasts] = useState([]);
+  const push = useCallback((msg)=>{
+    const id = Date.now()+Math.random();
+    setToasts(t=>[...t,{id,msg}]);
+    setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)), 2400);
+  },[]);
+  return (
+    <ToastCtx.Provider value={push}>
+      {children}
+      <div className="toast-wrap" aria-live="polite">
+        {toasts.map(t=> <div className="toast" key={t.id}>{t.msg}</div>)}
+      </div>
+    </ToastCtx.Provider>
+  );
+}
+const useToast = () => useContext(ToastCtx);
+
+const CartCtx = createContext(null);
+function CartProvider({children}){
+  const [items,setItems] = useState(()=>loadLS('rs_cart',[]));
+  useEffect(()=>saveLS('rs_cart',items),[items]);
+  const toast = useToast();
+  const add = (line)=>{
+    setItems(prev=>{
+      const key = JSON.stringify({id:line.id, opts:line.opts});
+      const idx = prev.findIndex(p=>JSON.stringify({id:p.id,opts:p.opts})===key);
+      if(idx>-1){ const cp=[...prev]; cp[idx]={...cp[idx], qty:cp[idx].qty+line.qty}; return cp; }
+      return [...prev, {...line, lineId: Date.now()+Math.random()}];
+    });
+    if(toast) toast(`${line.name} ditambahkan ke keranjang`);
+  };
+  const updateQty = (lineId, qty)=> setItems(prev=> qty<=0 ? prev.filter(p=>p.lineId!==lineId) : prev.map(p=>p.lineId===lineId?{...p,qty}:p));
+  const remove = (lineId)=> setItems(prev=>prev.filter(p=>p.lineId!==lineId));
+  const clear = ()=> setItems([]);
+  const subtotal = useMemo(()=>items.reduce((s,i)=>s+i.unitPrice*i.qty,0),[items]);
+  const count = useMemo(()=>items.reduce((s,i)=>s+i.qty,0),[items]);
+  return <CartCtx.Provider value={{items,add,updateQty,remove,clear,subtotal,count}}>{children}</CartCtx.Provider>;
+}
+const useCart = ()=> useContext(CartCtx);
+
+const WishCtx = createContext(null);
+function WishProvider({children}){
+  const [ids,setIds] = useState(()=>loadLS('rs_wishlist',[]));
+  useEffect(()=>saveLS('rs_wishlist',ids),[ids]);
+  const toast = useToast();
+  const toggle = (id)=> setIds(prev=>{
+    if(prev.includes(id)){ if(toast) toast('Dihapus dari favorit'); return prev.filter(x=>x!==id); }
+    if(toast) toast('Ditambahkan ke favorit');
+    return [...prev,id];
+  });
+  return <WishCtx.Provider value={{ids,toggle}}>{children}</WishCtx.Provider>;
+}
+const useWish = ()=> useContext(WishCtx);
+
+const UserCtx = createContext(null);
+function UserProvider({children}){
+  const [user,setUser] = useState(()=>loadLS('rs_user',null));
+  const [orders,setOrders] = useState(()=>loadLS('rs_orders',[]));
+  useEffect(()=>saveLS('rs_user',user),[user]);
+  useEffect(()=>saveLS('rs_orders',orders),[orders]);
+  const login = (email,name)=> setUser({email,name: name || email.split('@')[0], joined:new Date().toISOString(), address:''});
+  const register = (name,email)=> setUser({email,name,joined:new Date().toISOString(), address:''});
+  const logout = ()=> setUser(null);
+  const updateProfile = (patch)=> setUser(u=> u?{...u,...patch}:u);
+  const addOrder = (order)=> setOrders(prev=>[order,...prev]);
+  const advanceOrder = (id)=> setOrders(prev=>prev.map(o=> o.id===id ? {...o, statusIdx: Math.min(o.statusIdx+1,3)} : o));
+  return <UserCtx.Provider value={{user,login,register,logout,updateProfile,orders,addOrder,advanceOrder}}>{children}</UserCtx.Provider>;
+}
+const useUser = ()=> useContext(UserCtx);
+
+/* ---------------------------------------------------------
+   ROUTER — tiny hash router: #/menu, #/product/3, #/blog/2 ...
+--------------------------------------------------------- */
+function useRoute(){
+  const parse = ()=>{
+    const h = window.location.hash.replace(/^#\/?/,'') || 'home';
+    const [page, param] = h.split('/');
+    return {page: page||'home', param};
+  };
+  const [route,setRoute] = useState(parse);
+  useEffect(()=>{
+    const onHash = ()=>{ setRoute(parse()); window.scrollTo(0,0); };
+    window.addEventListener('hashchange', onHash);
+    return ()=>window.removeEventListener('hashchange', onHash);
+  },[]);
+  return route;
+}
+const go = (path)=>{ window.location.hash = path; };
+
+/* ---------------------------------------------------------
+   SMALL UI PRIMITIVES
+--------------------------------------------------------- */
+function Icon({name, size=20}){
+  const p = {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"1.8",strokeLinecap:"round",strokeLinejoin:"round"};
+  const paths = {
+    search:<><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></>,
+    cart:<><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6.2"/></>,
+    heart:<path d="M12 20s-7-4.35-9.5-8.8C.9 8 2.2 4.6 5.4 3.9c2-.45 3.9.4 5 2.1a1 1 0 0 0 1.2 0c1.1-1.7 3-2.55 5-2.1 3.2.7 4.5 4.1 2.9 7.3C19 15.65 12 20 12 20z"/>,
+    user:<><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.4-3.6 4.4-5.5 7.5-5.5s6.1 1.9 7.5 5.5"/></>,
+    menu:<><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></>,
+    close:<><path d="M6 6l12 12"/><path d="M18 6l-12 12"/></>,
+    star:<path d="M12 3.5l2.6 5.4 5.9.7-4.3 4.1 1.1 5.9L12 16.7 6.7 19.6l1.1-5.9L3.5 9.6l5.9-.7L12 3.5z"/>,
+    plus:<><path d="M12 5v14"/><path d="M5 12h14"/></>,
+    minus:<path d="M5 12h14"/>,
+    check:<path d="M4 12l5 5L20 6"/>,
+    pin:<><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></>,
+    clock:<><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></>,
+    chevRight:<path d="M9 6l6 6-6 6"/>,
+    chevDown:<path d="M6 9l6 6 6-6"/>,
+    trash:<><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></>,
+    ig:<><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></>,
+  };
+  return <svg {...p} aria-hidden="true">{paths[name]||null}</svg>;
+}
+
+function Stars({rating}){
+  const full = Math.round(rating);
+  return (
+    <span style={{display:'inline-flex',gap:2,color:'var(--accent)'}} aria-label={`Rating ${rating} dari 5`}>
+      {[1,2,3,4,5].map(i=> <span key={i} style={{opacity:i<=full?1:.25}}><Icon name="star" size={14}/></span>)}
+    </span>
+  );
+}
+
+function Badge({children,type}){
+  return <span className={`badge badge-${type}`}>{children}</span>;
+}
+
+function Modal({title, onClose, children, wide}){
+  useEffect(()=>{
+    const onKey = e=>{ if(e.key==='Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow='hidden';
+    return ()=>{document.removeEventListener('keydown', onKey); document.body.style.overflow='';};
+  },[onClose]);
+  return (
+    <div role="dialog" aria-modal="true" aria-label={title} style={{position:'fixed',inset:0,background:'rgba(20,15,12,0.5)',zIndex:150,display:'flex',alignItems:'flex-end',justifyContent:'center'}} onClick={onClose}>
+      <div className="card" style={{width:'100%',maxWidth:wide?640:460,maxHeight:'88vh',overflowY:'auto',borderBottomLeftRadius:0,borderBottomRightRadius:0,padding:22,animation:'none'}} onClick={e=>e.stopPropagation()}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+          <h3 style={{margin:0,fontSize:20}}>{title}</h3>
+          <button className="btn-ghost btn" aria-label="Tutup" onClick={onClose}><Icon name="close" size={18}/></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({icon,title,desc,action}){
+  return (
+    <div style={{textAlign:'center',padding:'60px 20px',color:'var(--text-muted)'}}>
+      <div style={{fontSize:38,marginBottom:10}}>{icon}</div>
+      <h3 style={{margin:'0 0 6px',color:'var(--text)'}}>{title}</h3>
+      <p style={{maxWidth:360,margin:'0 auto 18px'}}>{desc}</p>
+      {action}
+    </div>
+  );
+}
+
+function ProductVisual({product,size=1}){
+  const hues = {coffee:'#5B3A29,#8A5A3A',non_coffee:'#8A9A73,#5F6E48','non-coffee':'#8A9A73,#5F6E48',tea:'#7A8F6B,#4C5D3E',pastry:'#C99A5B,#8C5E2E',dessert:'#B5651D,#7A3E12',snacks:'#A9713C,#6E4423'};
+  const g = hues[product.category] || '#5B3A29,#8A5A3A';
+  const [c1,c2] = g.split(',');
+  return (
+    <div aria-hidden="true" style={{
+      background:`linear-gradient(135deg, ${c1}, ${c2})`,
+      borderRadius:12, aspectRatio:'1/1', display:'flex',alignItems:'center',justifyContent:'center',
+      fontSize: 40*size, color:'rgba(255,255,255,0.92)', position:'relative', overflow:'hidden'
+    }}>
+      <span>{catIcon(product.category)}</span>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   NAVBAR
+--------------------------------------------------------- */
+function NavBar({search,setSearch}){
+  const [open,setOpen] = useState(false);
+  const cart = useCart(); const wish = useWish(); const {user} = useUser();
+  const links = [['home','Beranda'],['menu','Menu'],['promo','Promo'],['about','Tentang'],['blog','Artikel'],['contact','Kontak']];
+  const route = useRoute();
+  return (
+    <header style={{position:'sticky',top:0,zIndex:100,background:'var(--bg)',borderBottom:'1px solid var(--line)'}}>
+      <div className="wrap" style={{display:'flex',alignItems:'center',gap:18,padding:'14px 20px',height:66}}>
+        <a href="#/home" style={{display:'flex',alignItems:'center',gap:8,fontFamily:'var(--serif)',fontWeight:600,fontSize:20,flexShrink:0}}>
+          <span aria-hidden="true">☕</span> Ruang Seduh
+        </a>
+        <nav style={{display:'flex',gap:4}} className="nav-desktop">
+          {links.map(([id,label])=>(
+            <a key={id} href={`#/${id}`} className="btn btn-ghost btn-sm" aria-current={route.page===id?'page':undefined}
+               style={{color: route.page===id ? 'var(--brand)':'var(--text-muted)', fontWeight:route.page===id?700:600}}>{label}</a>
+          ))}
+        </nav>
+        <div style={{flex:1}}/>
+        <div className="nav-search" style={{position:'relative',width:220}}>
+          <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--text-muted)'}}><Icon name="search" size={16}/></span>
+          <input aria-label="Cari produk" placeholder="Cari kopi, teh, snack..." value={search} onChange={e=>{setSearch(e.target.value); if(route.page!=='menu') go('menu');}}
+            style={{width:'100%',padding:'9px 12px 9px 34px',borderRadius:999,border:'1px solid var(--line)',background:'var(--surface)',color:'var(--text)',fontSize:13.5}}/>
+        </div>
+        <a href="#/favorites" className="btn btn-ghost" aria-label={`Favorit (${wish.ids.length})`} style={{position:'relative'}}>
+          <Icon name="heart" size={19}/>
+          {wish.ids.length>0 && <span style={{position:'absolute',top:2,right:2,background:'var(--accent)',color:'#fff',fontSize:10,borderRadius:99,minWidth:15,height:15,display:'flex',alignItems:'center',justifyContent:'center'}}>{wish.ids.length}</span>}
+        </a>
+        <a href="#/cart" className="btn btn-ghost" aria-label={`Keranjang (${cart.count})`} style={{position:'relative'}}>
+          <Icon name="cart" size={19}/>
+          {cart.count>0 && <span style={{position:'absolute',top:2,right:2,background:'var(--accent)',color:'#fff',fontSize:10,borderRadius:99,minWidth:15,height:15,display:'flex',alignItems:'center',justifyContent:'center'}}>{cart.count}</span>}
+        </a>
+        <a href={user?'#/profile':'#/login'} className="btn btn-ghost" aria-label="Akun"><Icon name="user" size={19}/></a>
+        <button className="btn btn-ghost nav-burger" aria-label="Buka menu" onClick={()=>setOpen(true)}><Icon name="menu" size={20}/></button>
+      </div>
+      {open && (
+        <div style={{position:'fixed',inset:0,background:'var(--bg)',zIndex:200,padding:20}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+            <span style={{fontFamily:'var(--serif)',fontSize:20,fontWeight:600}}>Menu</span>
+            <button className="btn btn-ghost" onClick={()=>setOpen(false)} aria-label="Tutup menu"><Icon name="close"/></button>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:4}}>
+            {links.map(([id,label])=>(
+              <a key={id} href={`#/${id}`} onClick={()=>setOpen(false)} style={{padding:'14px 4px',borderBottom:'1px solid var(--line)',fontSize:17,fontFamily:'var(--serif)'}}>{label}</a>
+            ))}
+            <a href="#/favorites" onClick={()=>setOpen(false)} style={{padding:'14px 4px',borderBottom:'1px solid var(--line)',fontSize:17,fontFamily:'var(--serif)'}}>Favorit</a>
+            <a href="#/cart" onClick={()=>setOpen(false)} style={{padding:'14px 4px',borderBottom:'1px solid var(--line)',fontSize:17,fontFamily:'var(--serif)'}}>Keranjang</a>
+            <a href={user?'#/profile':'#/login'} onClick={()=>setOpen(false)} style={{padding:'14px 4px',fontSize:17,fontFamily:'var(--serif)'}}>{user?'Profil Saya':'Masuk / Daftar'}</a>
+          </div>
+        </div>
+      )}
+      <style>{`
+        .nav-burger{display:none;}
+        @media (max-width:900px){ .nav-desktop, .nav-search{display:none;} .nav-burger{display:inline-flex;} }
+      `}</style>
+    </header>
+  );
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+--------------------------------------------------------- */
+function Footer(){
+  const toast = useToast();
+  const [email,setEmail] = useState('');
+  return (
+    <footer style={{background:'var(--surface)',borderTop:'1px solid var(--line)',marginTop:60}}>
+      <div className="wrap" style={{padding:'48px 20px 28px',display:'grid',gridTemplateColumns:'1.4fr 1fr 1fr 1.2fr',gap:32}}>
+        <div>
+          <div style={{fontFamily:'var(--serif)',fontSize:22,fontWeight:600,marginBottom:10}}>☕ Ruang Seduh</div>
+          <p style={{color:'var(--text-muted)',fontSize:14,lineHeight:1.6,maxWidth:280}}>Kopi yang punya waktu untukmu — diseduh pelan, disajikan hangat, untuk kamu yang butuh jeda.</p>
+          <div style={{display:'flex',gap:10,marginTop:14}}>
+            <a href="https://instagram.com" className="btn btn-outline btn-sm" aria-label="Instagram Ruang Seduh"><Icon name="ig" size={16}/></a>
+          </div>
+        </div>
+        <div>
+          <h4 style={{fontSize:13,textTransform:'none',color:'var(--text-muted)',marginBottom:12}}>Jelajah</h4>
+          <div style={{display:'flex',flexDirection:'column',gap:9,fontSize:14}}>
+            <a href="#/menu">Menu</a><a href="#/promo">Promo</a><a href="#/blog">Artikel</a><a href="#/about">Tentang Kami</a>
+          </div>
+        </div>
+        <div>
+          <h4 style={{fontSize:13,textTransform:'none',color:'var(--text-muted)',marginBottom:12}}>Bantuan</h4>
+          <div style={{display:'flex',flexDirection:'column',gap:9,fontSize:14}}>
+            <a href="#/contact">Kontak</a><a href="#/location">Lokasi</a><a href="#/profile">Riwayat Pesanan</a>
+          </div>
+        </div>
+        <div>
+          <h4 style={{fontSize:13,textTransform:'none',color:'var(--text-muted)',marginBottom:12}}>Newsletter</h4>
+          <p style={{fontSize:13.5,color:'var(--text-muted)',marginBottom:10}}>Info promo & menu baru langsung ke emailmu.</p>
+          <form onSubmit={e=>{e.preventDefault(); if(email){toast('Terima kasih sudah berlangganan!'); setEmail('');}}} style={{display:'flex',gap:6}}>
+            <input required type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Emailmu" aria-label="Email newsletter"
+              style={{flex:1,padding:'9px 12px',borderRadius:8,border:'1px solid var(--line)',background:'var(--bg)',color:'var(--text)',fontSize:13.5}}/>
+            <button className="btn btn-primary btn-sm" type="submit">Kirim</button>
+          </form>
+        </div>
+      </div>
+      <div style={{borderTop:'1px solid var(--line)',padding:'16px 20px',textAlign:'center',fontSize:12.5,color:'var(--text-muted)'}}>© 2026 Ruang Seduh. Semua pesanan di situs ini adalah simulasi demo.</div>
+    </footer>
+  );
+}
+
+/* ---------------------------------------------------------
+   PRODUCT CARD
+--------------------------------------------------------- */
+function ProductCard({product}){
+  const cart = useCart(); const wish = useWish();
+  const isFav = wish.ids.includes(product.id);
+  const finalPrice = product.discount ? Math.round(product.price*(1-product.discount/100)) : product.price;
+  const quickAdd = (e)=>{
+    e.preventDefault();
+    cart.add({id:product.id,name:product.name,unitPrice:finalPrice,qty:1,opts:{size:'Regular'}, image:product.category});
+  };
+  return (
+    <a href={`#/product/${product.id}`} className="card" style={{padding:12,display:'flex',flexDirection:'column',gap:10,position:'relative'}}>
+      <button onClick={(e)=>{e.preventDefault();wish.toggle(product.id);}} aria-label={isFav?'Hapus dari favorit':'Tambah ke favorit'}
+        style={{position:'absolute',top:20,right:20,zIndex:2,background:'var(--surface)',border:'1px solid var(--line)',borderRadius:99,width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',color:isFav?'var(--danger)':'var(--text-muted)',cursor:'pointer'}}>
+        <Icon name="heart" size={15}/>
+      </button>
+      <ProductVisual product={product}/>
+      <div style={{display:'flex',gap:6,flexWrap:'wrap',minHeight:20}}>
+        {product.isBestSeller && <Badge type="best">Best Seller</Badge>}
+        {product.isNew && <Badge type="new">Baru</Badge>}
+        {product.discount>0 && <Badge type="off">-{product.discount}%</Badge>}
+      </div>
+      <div style={{fontWeight:600,fontSize:15,lineHeight:1.3}}>{product.name}</div>
+      <div style={{display:'flex',alignItems:'center',gap:6,fontSize:12.5,color:'var(--text-muted)'}}>
+        <Stars rating={product.rating}/> <span>({product.reviews})</span>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:'auto'}}>
+        <div>
+          {product.discount>0 && <div style={{fontSize:12,color:'var(--text-muted)',textDecoration:'line-through'}}>{fmtRp(product.price)}</div>}
+          <div style={{fontWeight:700,color:'var(--brand)'}}>{fmtRp(finalPrice)}</div>
+        </div>
+        <button onClick={quickAdd} className="btn btn-primary btn-sm" aria-label={`Tambah ${product.name} ke keranjang`}><Icon name="plus" size={14}/></button>
+      </div>
+    </a>
+  );
+}
+
+/* ---------------------------------------------------------
+   HOME PAGE
+--------------------------------------------------------- */
+function Home(){
+  const bestSellers = PRODUCTS.filter(p=>p.isBestSeller);
+  const featured = PRODUCTS.slice(0,8);
+  return (
+    <div>
+      <section className="wrap" style={{padding:'56px 20px 40px',display:'grid',gridTemplateColumns:'1.1fr 0.9fr',gap:40,alignItems:'center'}}>
+        <div>
+          <p style={{color:'var(--accent)',fontWeight:700,fontSize:13.5,marginBottom:14}}>Coffee shop lokal, sejak 2019</p>
+          <h1 style={{fontSize:'clamp(34px,5vw,54px)',lineHeight:1.08,margin:'0 0 18px',fontWeight:600}}>Kopi yang punya<br/>waktu untukmu.</h1>
+          <p style={{fontSize:16.5,color:'var(--text-muted)',maxWidth:440,lineHeight:1.6,margin:'0 0 28px'}}>Setiap cangkir diseduh perlahan dari biji pilihan petani lokal. Tempat untuk kerja, ngobrol, atau sekadar duduk lebih lama.</p>
+          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+            <a href="#/menu" className="btn btn-primary">Pesan Sekarang</a>
+            <a href="#/menu" className="btn btn-outline">Lihat Menu</a>
+          </div>
+        </div>
+        <div style={{background:'linear-gradient(160deg,#5B3A29,#B5651D)',borderRadius:20,aspectRatio:'4/3',display:'flex',alignItems:'center',justifyContent:'center',fontSize:90}} aria-hidden="true">☕</div>
+      </section>
+
+      <section className="wrap" style={{padding:'20px 20px 50px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:18}}>
+          <h2 style={{fontSize:26,margin:0}}>Best Seller</h2>
+          <a href="#/menu" className="btn btn-ghost btn-sm">Lihat semua <Icon name="chevRight" size={14}/></a>
+        </div>
+        <div className="scrollx">
+          {bestSellers.map(p=> <div key={p.id} style={{minWidth:200}}><ProductCard product={p}/></div>)}
+        </div>
+      </section>
+
+      <section style={{background:'var(--surface-2)',padding:'50px 0'}}>
+        <div className="wrap" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:40,alignItems:'center'}}>
+          <div style={{background:'var(--surface)',border:'1px solid var(--line)',borderRadius:16,padding:28}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--accent)',marginBottom:8}}>Promo Spesial</div>
+            <h3 style={{fontSize:22,margin:'0 0 10px'}}>{PROMOS[2].title}</h3>
+            <p style={{color:'var(--text-muted)',marginBottom:16}}>{PROMOS[2].desc}</p>
+            <a href="#/promo" className="btn btn-primary btn-sm">Lihat Promo Lain</a>
+          </div>
+          <div>
+            <h2 style={{fontSize:26,marginTop:0}}>Kenapa Ruang Seduh?</h2>
+            <ul style={{listStyle:'none',padding:0,margin:0,display:'flex',flexDirection:'column',gap:14}}>
+              {[['Biji kopi lokal pilihan','Bekerja sama langsung dengan petani di Jawa dan Sumatra.'],
+                ['Barista bersertifikat','Diseduh dengan takaran presisi, konsisten tiap hari.'],
+                ['Ruang nyaman untuk kerja','Wifi cepat, colokan di tiap meja, playlist yang tidak mengganggu.']].map(([t,d])=>(
+                <li key={t} style={{display:'flex',gap:12}}>
+                  <span style={{color:'var(--accent)',flexShrink:0,marginTop:2}}><Icon name="check" size={18}/></span>
+                  <div><div style={{fontWeight:600}}>{t}</div><div style={{color:'var(--text-muted)',fontSize:14}}>{d}</div></div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="wrap" style={{padding:'50px 20px'}}>
+        <h2 style={{fontSize:26,marginBottom:18}}>Favorit Pelanggan</h2>
+        <div className="grid-products">
+          {featured.map(p=> <ProductCard key={p.id} product={p}/>)}
+        </div>
+      </section>
+
+      <section className="wrap" style={{padding:'20px 20px 60px'}}>
+        <h2 style={{fontSize:26,marginBottom:18}}>Kata Mereka</h2>
+        <div className="scrollx">
+          {REVIEW_SEED.map(r=>(
+            <div key={r.id} className="card" style={{minWidth:280,padding:20}}>
+              <Stars rating={r.rating}/>
+              <p style={{margin:'10px 0',color:'var(--text)'}}>&ldquo;{r.text}&rdquo;</p>
+              <div style={{fontSize:13,color:'var(--text-muted)'}}>{r.name} · {r.date}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{background:'var(--surface-2)',padding:'50px 20px'}}>
+        <div className="wrap" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:30}}>
+          <div>
+            <h2 style={{fontSize:24,marginTop:0}}>Kunjungi Kami</h2>
+            <p style={{display:'flex',gap:10,alignItems:'flex-start',color:'var(--text-muted)'}}><Icon name="pin" size={18}/> Jl. Darmo Permai III No. 12, Surabaya</p>
+            <p style={{display:'flex',gap:10,alignItems:'flex-start',color:'var(--text-muted)'}}><Icon name="clock" size={18}/> Setiap hari, 07.00 – 22.00</p>
+            <a href="#/location" className="btn btn-outline btn-sm">Lihat Lokasi</a>
+          </div>
+          <div>
+            <h2 style={{fontSize:24,marginTop:0}}>@ruangseduh.id</h2>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+              {[1,2,3].map(i=><div key={i} aria-hidden="true" style={{aspectRatio:'1/1',borderRadius:10,background:'linear-gradient(135deg,#5B3A29,#B5651D)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,color:'#fff'}}>☕</div>)}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   MENU PAGE
+--------------------------------------------------------- */
+function Menu({search,setSearch}){
+  const [cat,setCat] = useState('all');
+  const [sort,setSort] = useState('pop');
+  let list = PRODUCTS.filter(p=> (cat==='all'||p.category===cat) && p.name.toLowerCase().includes(search.toLowerCase()));
+  if(sort==='price-asc') list = [...list].sort((a,b)=>a.price-b.price);
+  if(sort==='price-desc') list = [...list].sort((a,b)=>b.price-a.price);
+  if(sort==='rating') list = [...list].sort((a,b)=>b.rating-a.rating);
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <h1 style={{fontSize:32,marginBottom:6}}>Menu Kami</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:24}}>{list.length} produk ditemukan</p>
+      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <div className="scrollx" style={{flex:1,paddingBottom:0}}>
+          {[{id:'all',label:'Semua',icon:'✨'},...CATS].map(c=>(
+            <button key={c.id} onClick={()=>setCat(c.id)} className="btn btn-sm" style={{flexShrink:0,
+              background: cat===c.id ? 'var(--brand)':'var(--surface)', color: cat===c.id?'#fff':'var(--text)', border:'1px solid var(--line)'}}>
+              <span style={{marginRight:6}}>{c.icon}</span>{c.label}
+            </button>
+          ))}
+        </div>
+        <select aria-label="Urutkan" value={sort} onChange={e=>setSort(e.target.value)} style={{padding:'9px 12px',borderRadius:10,border:'1px solid var(--line)',background:'var(--surface)',color:'var(--text)',flexShrink:0}}>
+          <option value="pop">Paling Populer</option>
+          <option value="price-asc">Harga Terendah</option>
+          <option value="price-desc">Harga Tertinggi</option>
+          <option value="rating">Rating Tertinggi</option>
+        </select>
+      </div>
+      {list.length===0 ? (
+        <EmptyState icon="🔍" title="Produk tidak ditemukan" desc={`Tidak ada hasil untuk "${search}". Coba kata kunci atau kategori lain.`}
+          action={<button className="btn btn-outline" onClick={()=>{setSearch('');setCat('all');}}>Reset Pencarian</button>}/>
+      ) : (
+        <div className="grid-products">{list.map(p=><ProductCard key={p.id} product={p}/>)}</div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   PRODUCT DETAIL
+--------------------------------------------------------- */
+function ProductDetail({id}){
+  const product = PRODUCTS.find(p=>p.id===Number(id));
+  const cart = useCart(); const wish = useWish(); const toast = useToast();
+  const [size,setSize] = useState('r');
+  const [temp,setTemp] = useState('ice');
+  const [sugar,setSugar] = useState('100');
+  const [ice,setIce] = useState('100');
+  const [toppings,setToppings] = useState([]);
+  const [qty,setQty] = useState(1);
+  const [note,setNote] = useState('');
+
+  if(!product) return <EmptyState icon="😕" title="Produk tidak ditemukan" desc="Produk ini mungkin sudah tidak tersedia." action={<a href="#/menu" className="btn btn-primary">Kembali ke Menu</a>}/>;
+
+  const isDrink = product.category!=='pastry' && product.category!=='dessert' && product.category!=='snacks';
+  const base = product.discount ? Math.round(product.price*(1-product.discount/100)) : product.price;
+  const sizeAdd = SIZE_OPTS.find(s=>s.id===size).add;
+  const topAdd = toppings.reduce((s,t)=>s+TOPPING_OPTS.find(o=>o.id===t).add,0);
+  const unit = base + (isDrink?sizeAdd:0) + (isDrink?topAdd:0);
+  const total = unit*qty;
+
+  const toggleTop = (id)=> setToppings(prev=> prev.includes(id) ? prev.filter(x=>x!==id) : [...prev,id]);
+
+  const addToCart = ()=>{
+    const opts = isDrink ? {
+      size: SIZE_OPTS.find(s=>s.id===size).label, temp: TEMP_OPTS.find(t=>t.id===temp).label,
+      sugar: `Gula ${SUGAR_OPTS.find(s=>s.id===sugar).label}`, ice: `Es ${ICE_OPTS.find(i=>i.id===ice).label}`,
+      toppings: toppings.map(t=>TOPPING_OPTS.find(o=>o.id===t).label), note
+    } : { note };
+    cart.add({id:product.id,name:product.name,unitPrice:unit,qty,opts,image:product.category});
+  };
+
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <a href="#/menu" className="btn btn-ghost btn-sm" style={{marginBottom:16}}><Icon name="chevRight" size={14}/> Kembali</a>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:40}} className="pd-grid">
+        <div style={{position:'sticky',top:90,alignSelf:'flex-start'}}>
+          <ProductVisual product={product} size={2.2}/>
+        </div>
+        <div>
+          <div style={{display:'flex',gap:6,marginBottom:10}}>
+            {product.isBestSeller && <Badge type="best">Best Seller</Badge>}
+            {product.isNew && <Badge type="new">Baru</Badge>}
+            {product.discount>0 && <Badge type="off">-{product.discount}%</Badge>}
+          </div>
+          <h1 style={{fontSize:30,margin:'0 0 8px'}}>{product.name}</h1>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12,fontSize:14,color:'var(--text-muted)'}}>
+            <Stars rating={product.rating}/> {product.rating} · {product.reviews} ulasan · {catLabel(product.category)}
+          </div>
+          <p style={{color:'var(--text-muted)',lineHeight:1.6,marginBottom:18}}>{product.desc}</p>
+          <div style={{fontSize:26,fontWeight:700,color:'var(--brand)',marginBottom:22}}>{fmtRp(unit)}</div>
+
+          {isDrink && (
+            <>
+              <OptionGroup label="Ukuran" opts={SIZE_OPTS} value={size} onChange={setSize} priceKey="add"/>
+              <OptionGroup label="Suhu" opts={TEMP_OPTS} value={temp} onChange={setTemp}/>
+              <OptionGroup label="Level Gula" opts={SUGAR_OPTS} value={sugar} onChange={setSugar}/>
+              <OptionGroup label="Level Es" opts={ICE_OPTS} value={ice} onChange={setIce}/>
+              <div style={{marginBottom:20}}>
+                <label style={{display:'block',fontSize:13,fontWeight:600,marginBottom:8}}>Tambahan (opsional)</label>
+                <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                  {TOPPING_OPTS.map(t=>(
+                    <button key={t.id} onClick={()=>toggleTop(t.id)} className="btn btn-sm" style={{border:'1px solid var(--line)',
+                      background: toppings.includes(t.id)?'var(--brand)':'var(--surface)', color: toppings.includes(t.id)?'#fff':'var(--text)'}}>
+                      {t.label} (+{fmtRp(t.add)})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="field" style={{marginBottom:22}}>
+            <label htmlFor="note">Catatan khusus</label>
+            <textarea id="note" rows="2" placeholder="Contoh: tolong gulanya dipisah" value={note} onChange={e=>setNote(e.target.value)}/>
+          </div>
+
+          <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:22}}>
+            <span style={{fontWeight:600,fontSize:14}}>Jumlah</span>
+            <div style={{display:'flex',alignItems:'center',border:'1px solid var(--line)',borderRadius:999}}>
+              <button className="btn btn-ghost" aria-label="Kurangi jumlah" onClick={()=>setQty(q=>Math.max(1,q-1))}><Icon name="minus" size={14}/></button>
+              <span style={{minWidth:24,textAlign:'center',fontWeight:600}}>{qty}</span>
+              <button className="btn btn-ghost" aria-label="Tambah jumlah" onClick={()=>setQty(q=>q+1)}><Icon name="plus" size={14}/></button>
+            </div>
+          </div>
+
+          <div style={{display:'flex',gap:10}}>
+            <button className="btn btn-primary" style={{flex:1}} onClick={()=>{addToCart();}}>Tambah ke Keranjang — {fmtRp(total)}</button>
+            <button className="btn btn-outline" aria-label="Tambah ke favorit" onClick={()=>wish.toggle(product.id)} style={{color: wish.ids.includes(product.id)?'var(--danger)':'var(--text)'}}>
+              <Icon name="heart" size={18}/>
+            </button>
+          </div>
+        </div>
+      </div>
+      <style>{`@media (max-width:800px){ .pd-grid{grid-template-columns:1fr !important;} }`}</style>
+    </div>
+  );
+}
+function OptionGroup({label,opts,value,onChange,priceKey}){
+  return (
+    <div style={{marginBottom:18}}>
+      <label style={{display:'block',fontSize:13,fontWeight:600,marginBottom:8}}>{label}</label>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+        {opts.map(o=>(
+          <button key={o.id} onClick={()=>onChange(o.id)} className="btn btn-sm" style={{border:'1px solid var(--line)',
+            background: value===o.id?'var(--brand)':'var(--surface)', color: value===o.id?'#fff':'var(--text)'}}>
+            {o.label}{priceKey && o[priceKey]>0 ? ` (+${fmtRp(o[priceKey])})` : ''}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   CART PAGE
+--------------------------------------------------------- */
+function CartPage(){
+  const cart = useCart();
+  const tax = Math.round(cart.subtotal*0.05);
+  const deliveryFee = 0;
+  const grandTotal = cart.subtotal + tax + deliveryFee;
+  if(cart.items.length===0){
+    return <div className="wrap" style={{padding:'40px 20px 60px'}}>
+      <EmptyState icon="🛒" title="Keranjang masih kosong" desc="Yuk pilih menu favoritmu dan mulai pesan." action={<a href="#/menu" className="btn btn-primary">Lihat Menu</a>}/>
+    </div>;
+  }
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',display:'grid',gridTemplateColumns:'1.6fr 1fr',gap:30}} >
+      <div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+          <h1 style={{fontSize:28,margin:0}}>Keranjang</h1>
+          <button className="btn btn-ghost btn-sm" onClick={cart.clear}><Icon name="trash" size={14}/> Kosongkan</button>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {cart.items.map(item=>(
+            <div key={item.lineId} className="card" style={{display:'flex',gap:14,padding:14}}>
+              <div style={{width:64,flexShrink:0}}><ProductVisual product={{category:item.image}}/></div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontWeight:600}}>{item.name}</div>
+                <div style={{fontSize:12.5,color:'var(--text-muted)',margin:'4px 0'}}>
+                  {Object.entries(item.opts||{}).filter(([k,v])=>v && (!Array.isArray(v)||v.length)).map(([k,v])=> Array.isArray(v)? (v.length?v.join(', '):null) : v).filter(Boolean).join(' · ')}
+                </div>
+                <div style={{fontWeight:700,color:'var(--brand)'}}>{fmtRp(item.unitPrice)}</div>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',justifyContent:'space-between'}}>
+                <button className="btn btn-ghost" aria-label={`Hapus ${item.name}`} onClick={()=>cart.remove(item.lineId)}><Icon name="trash" size={15}/></button>
+                <div style={{display:'flex',alignItems:'center',border:'1px solid var(--line)',borderRadius:999}}>
+                  <button className="btn btn-ghost btn-sm" aria-label="Kurangi" onClick={()=>cart.updateQty(item.lineId,item.qty-1)}><Icon name="minus" size={12}/></button>
+                  <span style={{minWidth:20,textAlign:'center',fontSize:13.5}}>{item.qty}</span>
+                  <button className="btn btn-ghost btn-sm" aria-label="Tambah" onClick={()=>cart.updateQty(item.lineId,item.qty+1)}><Icon name="plus" size={12}/></button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="card" style={{padding:22,height:'fit-content',position:'sticky',top:90}}>
+        <h3 style={{marginTop:0}}>Ringkasan</h3>
+        <SummaryRow label="Subtotal" value={fmtRp(cart.subtotal)}/>
+        <SummaryRow label="Pajak (5%)" value={fmtRp(tax)}/>
+        <SummaryRow label="Biaya Antar" value={deliveryFee===0?'Gratis':fmtRp(deliveryFee)}/>
+        <div style={{borderTop:'1px solid var(--line)',margin:'12px 0'}}/>
+        <SummaryRow label="Total" value={fmtRp(grandTotal)} bold/>
+        <a href="#/checkout" className="btn btn-primary btn-full" style={{marginTop:16}}>Lanjut ke Checkout</a>
+      </div>
+    </div>
+  );
+}
+function SummaryRow({label,value,bold}){
+  return <div style={{display:'flex',justifyContent:'space-between',padding:'6px 0',fontWeight:bold?700:400,fontSize:bold?16:14.5}}>
+    <span style={{color:bold?'var(--text)':'var(--text-muted)'}}>{label}</span><span>{value}</span>
+  </div>;
+}
+
+/* ---------------------------------------------------------
+   CHECKOUT PAGE
+--------------------------------------------------------- */
+function Checkout(){
+  const cart = useCart(); const {user,addOrder} = useUser(); const toast = useToast();
+  const [form,setForm] = useState({name:user?.name||'',phone:'',email:user?.email||'',orderType:'dine-in',address:'',notes:'',payment:'cash'});
+  const [errors,setErrors] = useState({});
+  const tax = Math.round(cart.subtotal*0.05);
+  const deliveryFee = form.orderType==='delivery' ? 8000 : 0;
+  const grandTotal = cart.subtotal+tax+deliveryFee;
+
+  if(cart.items.length===0){
+    return <div className="wrap" style={{padding:'40px 20px 60px'}}>
+      <EmptyState icon="🧾" title="Belum ada pesanan" desc="Keranjangmu kosong, tambahkan menu dulu sebelum checkout." action={<a href="#/menu" className="btn btn-primary">Lihat Menu</a>}/>
+    </div>;
+  }
+
+  const set = (k,v)=> setForm(f=>({...f,[k]:v}));
+
+  const validate = ()=>{
+    const e = {};
+    if(!form.name.trim()) e.name='Nama wajib diisi';
+    if(!/^\d{8,15}$/.test(form.phone.replace(/\D/g,''))) e.phone='Nomor telepon tidak valid';
+    if(!/^\S+@\S+\.\S+$/.test(form.email)) e.email='Email tidak valid';
+    if(form.orderType==='delivery' && !form.address.trim()) e.address='Alamat wajib diisi untuk pengantaran';
+    setErrors(e);
+    return Object.keys(e).length===0;
+  };
+
+  const submit = (e)=>{
+    e.preventDefault();
+    if(!validate()){ toast('Periksa kembali data yang belum lengkap'); return; }
+    const order = {
+      id: 'RS-'+Date.now().toString().slice(-6),
+      items: cart.items, subtotal: cart.subtotal, tax, deliveryFee, total: grandTotal,
+      orderType: form.orderType, payment: form.payment, customer:{name:form.name,phone:form.phone,email:form.email,address:form.address},
+      notes: form.notes, statusIdx: 0, createdAt: new Date().toISOString(), eta: form.orderType==='delivery' ? '35-45 menit' : '10-15 menit',
+    };
+    addOrder(order);
+    cart.clear();
+    toast('Pesanan berhasil dibuat!');
+    go(`tracking/${order.id}`);
+  };
+
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',display:'grid',gridTemplateColumns:'1.5fr 1fr',gap:30}}>
+      <form onSubmit={submit}>
+        <h1 style={{fontSize:28,marginBottom:20}}>Checkout</h1>
+        <div className="card" style={{padding:20,marginBottom:18}}>
+          <h3 style={{marginTop:0}}>Informasi Pelanggan</h3>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            <div className={`field ${errors.name?'has-err':''}`}>
+              <label htmlFor="c-name">Nama</label>
+              <input id="c-name" value={form.name} onChange={e=>set('name',e.target.value)}/>
+              {errors.name && <div className="err">{errors.name}</div>}
+            </div>
+            <div className={`field ${errors.phone?'has-err':''}`}>
+              <label htmlFor="c-phone">No. Telepon</label>
+              <input id="c-phone" value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="08xxxxxxxxxx"/>
+              {errors.phone && <div className="err">{errors.phone}</div>}
+            </div>
+          </div>
+          <div className={`field ${errors.email?'has-err':''}`} style={{marginTop:14}}>
+            <label htmlFor="c-email">Email</label>
+            <input id="c-email" type="email" value={form.email} onChange={e=>set('email',e.target.value)}/>
+            {errors.email && <div className="err">{errors.email}</div>}
+          </div>
+        </div>
+
+        <div className="card" style={{padding:20,marginBottom:18}}>
+          <h3 style={{marginTop:0}}>Tipe Pesanan</h3>
+          <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+            {[['dine-in','Dine In'],['take-away','Take Away'],['delivery','Delivery']].map(([id,label])=>(
+              <button type="button" key={id} onClick={()=>set('orderType',id)} className="btn btn-sm" style={{border:'1px solid var(--line)',
+                background:form.orderType===id?'var(--brand)':'var(--surface)', color:form.orderType===id?'#fff':'var(--text)'}}>{label}</button>
+            ))}
+          </div>
+          {form.orderType==='delivery' && (
+            <div style={{marginTop:16}}>
+              <div className={`field ${errors.address?'has-err':''}`}>
+                <label htmlFor="c-addr">Alamat Pengantaran</label>
+                <textarea id="c-addr" rows="2" value={form.address} onChange={e=>set('address',e.target.value)}/>
+                {errors.address && <div className="err">{errors.address}</div>}
+              </div>
+              <div className="field" style={{marginTop:10}}>
+                <label htmlFor="c-note">Catatan Alamat</label>
+                <input id="c-note" value={form.notes} onChange={e=>set('notes',e.target.value)} placeholder="Patokan rumah, warna pagar, dll"/>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="card" style={{padding:20}}>
+          <h3 style={{marginTop:0}}>Metode Pembayaran</h3>
+          <p style={{fontSize:13,color:'var(--text-muted)',marginTop:-8,marginBottom:14}}>Pembayaran di situs ini hanya simulasi, tidak ada transaksi nyata.</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            {[['cash','💵 Cash'],['qris','📱 QRIS'],['ewallet','💳 E-Wallet'],['transfer','🏦 Transfer Bank']].map(([id,label])=>(
+              <button type="button" key={id} onClick={()=>set('payment',id)} className="btn btn-sm" style={{border:'1px solid var(--line)',justifyContent:'flex-start',
+                background:form.payment===id?'var(--brand)':'var(--surface)', color:form.payment===id?'#fff':'var(--text)'}}>{label}</button>
+            ))}
+          </div>
+        </div>
+      </form>
+
+      <div className="card" style={{padding:22,height:'fit-content',position:'sticky',top:90}}>
+        <h3 style={{marginTop:0}}>Ringkasan Pesanan</h3>
+        {cart.items.map(i=> <SummaryRow key={i.lineId} label={`${i.qty}× ${i.name}`} value={fmtRp(i.unitPrice*i.qty)}/>)}
+        <div style={{borderTop:'1px solid var(--line)',margin:'10px 0'}}/>
+        <SummaryRow label="Subtotal" value={fmtRp(cart.subtotal)}/>
+        <SummaryRow label="Pajak" value={fmtRp(tax)}/>
+        <SummaryRow label="Biaya Antar" value={deliveryFee===0?'Gratis':fmtRp(deliveryFee)}/>
+        <div style={{borderTop:'1px solid var(--line)',margin:'10px 0'}}/>
+        <SummaryRow label="Total" value={fmtRp(grandTotal)} bold/>
+        <button onClick={submit} className="btn btn-primary btn-full" style={{marginTop:16}}>Buat Pesanan</button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   ORDER TRACKING
+--------------------------------------------------------- */
+const STATUS_STEPS = ['Pesanan Diterima','Sedang Disiapkan','Siap Diambil/Diantar','Selesai'];
+function Tracking({id}){
+  const {orders,advanceOrder} = useUser();
+  const order = orders.find(o=>o.id===id);
+  if(!order) return <div className="wrap" style={{padding:'40px 20px 60px'}}>
+    <EmptyState icon="🔎" title="Pesanan tidak ditemukan" desc="Cek kembali nomor pesananmu atau lihat riwayat di profil." action={<a href="#/profile" className="btn btn-primary">Lihat Riwayat</a>}/>
+  </div>;
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',maxWidth:640}}>
+      <h1 style={{fontSize:26,marginBottom:4}}>Lacak Pesanan</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:24}}>ID Pesanan: <strong>{order.id}</strong> · Estimasi {order.eta}</p>
+      <div className="card" style={{padding:24,marginBottom:20}}>
+        {STATUS_STEPS.map((s,idx)=>(
+          <div key={s} style={{display:'flex',gap:14,paddingBottom: idx<STATUS_STEPS.length-1?24:0,position:'relative'}}>
+            {idx<STATUS_STEPS.length-1 && <div style={{position:'absolute',left:11,top:26,width:2,height:'calc(100% - 10px)',background: idx<order.statusIdx?'var(--brand)':'var(--line)'}}/>}
+            <div style={{width:24,height:24,borderRadius:99,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',
+              background: idx<=order.statusIdx?'var(--brand)':'var(--surface-2)', color: idx<=order.statusIdx?'#fff':'var(--text-muted)',border: idx<=order.statusIdx?'none':'1px solid var(--line)'}}>
+              {idx<order.statusIdx ? <Icon name="check" size={13}/> : <span style={{fontSize:11,fontWeight:700}}>{idx+1}</span>}
+            </div>
+            <div>
+              <div style={{fontWeight: idx===order.statusIdx?700:500,color: idx<=order.statusIdx?'var(--text)':'var(--text-muted)'}}>{s}</div>
+              {idx===order.statusIdx && <div style={{fontSize:12.5,color:'var(--text-muted)'}}>Status saat ini</div>}
+            </div>
+          </div>
+        ))}
+        {order.statusIdx<3 && (
+          <button className="btn btn-outline btn-sm" style={{marginTop:18}} onClick={()=>advanceOrder(order.id)}>
+            Simulasikan status berikutnya
+          </button>
+        )}
+      </div>
+      <div className="card" style={{padding:20}}>
+        <h3 style={{marginTop:0}}>Ringkasan Pesanan</h3>
+        {order.items.map((i,idx)=><SummaryRow key={idx} label={`${i.qty}× ${i.name}`} value={fmtRp(i.unitPrice*i.qty)}/>)}
+        <div style={{borderTop:'1px solid var(--line)',margin:'10px 0'}}/>
+        <SummaryRow label="Total" value={fmtRp(order.total)} bold/>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   PROMO PAGE
+--------------------------------------------------------- */
+function PromoPage(){
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <h1 style={{fontSize:32,marginBottom:6}}>Promo & Penawaran</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:26}}>Nikmati diskon dan bundel spesial dari Ruang Seduh.</p>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:16}} className="promo-grid">
+        {PROMOS.map(p=>(
+          <div key={p.id} className="card" style={{padding:22,display:'flex',flexDirection:'column',gap:8}}>
+            <span className="badge badge-new" style={{alignSelf:'flex-start'}}>{p.type}</span>
+            <h3 style={{margin:'6px 0 2px'}}>{p.title}</h3>
+            <p style={{color:'var(--text-muted)',fontSize:14.5,margin:0}}>{p.desc}</p>
+            <div style={{fontSize:12.5,color:'var(--accent)',fontWeight:700,marginTop:8}}>{p.tag}</div>
+          </div>
+        ))}
+      </div>
+      <style>{`@media (max-width:700px){ .promo-grid{grid-template-columns:1fr !important;} }`}</style>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   ABOUT PAGE
+--------------------------------------------------------- */
+function About(){
+  const blocks = [
+    ['Cerita Kami','Ruang Seduh dimulai tahun 2019 dari garasi rumah dengan satu mesin espresso bekas. Kini kami punya satu ruang di Surabaya yang dikunjungi ratusan orang tiap minggu, tapi semangatnya tetap sama: menyeduh kopi dengan sabar.'],
+    ['Cerita Founder','Didirikan oleh dua sahabat kuliah yang jatuh cinta pada kopi lokal saat backpacking ke dataran tinggi Ijen. Mereka percaya kopi terbaik Indonesia belum banyak diketahui orang, dan ingin membawanya ke cangkir sehari-hari.'],
+    ['Filosofi Kopi','Kami percaya kopi terbaik lahir dari kesabaran — mulai dari petani yang menunggu panen, roaster yang menunggu waktu sangrai yang tepat, sampai barista yang tidak terburu-buru menyeduh.'],
+    ['Bahan Berkualitas','Susu segar dari peternakan lokal, gula aren asli tanpa pemanis buatan, dan biji kopi yang di-roasting maksimal dua minggu sebelum digunakan.'],
+    ['Barista Kami','Setiap barista melalui pelatihan dasar seduh manual dan espresso selama sebulan sebelum melayani pelanggan, agar rasa yang kamu terima konsisten.'],
+    ['Keberlanjutan','Kami memakai cup dan sedotan biodegradable, serta membeli langsung dari petani dengan harga di atas pasar untuk mendukung pertanian kopi yang berkelanjutan.'],
+    ['Asal Biji Kopi','Biji kopi kami berasal dari Gayo (Aceh), Ijen (Jawa Timur), dan Toraja (Sulawesi) — dipilih langsung dari petani mitra jangka panjang.'],
+  ];
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',maxWidth:760}}>
+      <h1 style={{fontSize:34,marginBottom:30}}>Tentang Ruang Seduh</h1>
+      {blocks.map(([t,d])=>(
+        <div key={t} style={{marginBottom:28}}>
+          <h2 style={{fontSize:20,marginBottom:8}}>{t}</h2>
+          <p style={{color:'var(--text-muted)',lineHeight:1.7,margin:0}}>{d}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   BLOG PAGES
+--------------------------------------------------------- */
+function Blog(){
+  const [q,setQ] = useState('');
+  const list = ARTICLES.filter(a=>a.title.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <h1 style={{fontSize:32,marginBottom:6}}>Artikel Kopi</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:20}}>Belajar lebih dalam soal kopi, dari biji sampai cangkir.</p>
+      <div style={{position:'relative',maxWidth:340,marginBottom:26}}>
+        <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--text-muted)'}}><Icon name="search" size={15}/></span>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Cari artikel..." aria-label="Cari artikel"
+          style={{width:'100%',padding:'10px 12px 10px 34px',borderRadius:10,border:'1px solid var(--line)',background:'var(--surface)',color:'var(--text)'}}/>
+      </div>
+      {list.length===0 ? <EmptyState icon="📰" title="Artikel tidak ditemukan" desc="Coba kata kunci lain."/> : (
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}} className="blog-grid">
+          {list.map(a=>(
+            <a key={a.id} href={`#/blog/${a.id}`} className="card" style={{padding:18,display:'flex',flexDirection:'column',gap:8}}>
+              <span style={{fontSize:12,fontWeight:700,color:'var(--accent)'}}>{a.cat}</span>
+              <h3 style={{margin:'2px 0',fontSize:17,lineHeight:1.3}}>{a.title}</h3>
+              <p style={{color:'var(--text-muted)',fontSize:13.5,margin:0}}>{a.excerpt}</p>
+              <div style={{fontSize:12,color:'var(--text-muted)',marginTop:'auto',paddingTop:8}}>{a.date} · {a.read} baca</div>
+            </a>
+          ))}
+        </div>
+      )}
+      <style>{`@media (max-width:800px){ .blog-grid{grid-template-columns:1fr 1fr !important;} } @media (max-width:520px){ .blog-grid{grid-template-columns:1fr !important;} }`}</style>
+    </div>
+  );
+}
+function BlogDetail({id}){
+  const a = ARTICLES.find(x=>x.id===Number(id));
+  if(!a) return <EmptyState icon="📰" title="Artikel tidak ditemukan" desc="Artikel ini mungkin sudah dipindahkan." action={<a href="#/blog" className="btn btn-primary">Kembali ke Artikel</a>}/>;
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',maxWidth:680}}>
+      <a href="#/blog" className="btn btn-ghost btn-sm" style={{marginBottom:16}}>← Kembali ke Artikel</a>
+      <span style={{fontSize:12,fontWeight:700,color:'var(--accent)'}}>{a.cat}</span>
+      <h1 style={{fontSize:30,margin:'8px 0 10px'}}>{a.title}</h1>
+      <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:22}}>{a.date} · {a.read} baca</div>
+      <p style={{lineHeight:1.8,fontSize:16,color:'var(--text)'}}>{a.body}</p>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   REVIEWS PAGE
+--------------------------------------------------------- */
+function ReviewsPage(){
+  const [reviews,setReviews] = useState(()=>loadLS('rs_reviews', REVIEW_SEED));
+  useEffect(()=>saveLS('rs_reviews',reviews),[reviews]);
+  const [form,setForm] = useState({name:'',rating:5,text:''});
+  const toast = useToast();
+  const submit = e=>{
+    e.preventDefault();
+    if(!form.name.trim()||!form.text.trim()){ toast('Lengkapi nama dan ulasan terlebih dahulu'); return; }
+    setReviews(r=>[{id:Date.now(),name:form.name,rating:form.rating,text:form.text,date:new Date().toISOString().slice(0,10)},...r]);
+    setForm({name:'',rating:5,text:''});
+    toast('Terima kasih atas ulasannya!');
+  };
+  const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',display:'grid',gridTemplateColumns:'1fr 1.3fr',gap:34}} >
+      <div>
+        <h1 style={{fontSize:28,marginBottom:6}}>Ulasan Pelanggan</h1>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:20}}>
+          <span style={{fontSize:28,fontWeight:700}}>{avg}</span><Stars rating={Number(avg)}/><span style={{color:'var(--text-muted)',fontSize:13.5}}>({reviews.length} ulasan)</span>
+        </div>
+        <form onSubmit={submit} className="card" style={{padding:18}}>
+          <h3 style={{marginTop:0,fontSize:16}}>Tulis Ulasan</h3>
+          <div className="field" style={{marginBottom:10}}>
+            <label htmlFor="rv-name">Nama</label>
+            <input id="rv-name" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+          </div>
+          <div className="field" style={{marginBottom:10}}>
+            <label htmlFor="rv-rating">Rating</label>
+            <select id="rv-rating" value={form.rating} onChange={e=>setForm(f=>({...f,rating:Number(e.target.value)}))}>
+              {[5,4,3,2,1].map(n=><option key={n} value={n}>{n} bintang</option>)}
+            </select>
+          </div>
+          <div className="field" style={{marginBottom:14}}>
+            <label htmlFor="rv-text">Ulasan</label>
+            <textarea id="rv-text" rows="3" value={form.text} onChange={e=>setForm(f=>({...f,text:e.target.value}))}/>
+          </div>
+          <button className="btn btn-primary btn-full" type="submit">Kirim Ulasan</button>
+        </form>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:12,paddingTop: window.innerWidth>800 ? 62 : 0}}>
+        {reviews.map(r=>(
+          <div key={r.id} className="card" style={{padding:16,display:'flex',gap:12}}>
+            <div style={{width:38,height:38,borderRadius:99,background:'var(--brand)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,flexShrink:0}}>{r.name[0].toUpperCase()}</div>
+            <div>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}><strong>{r.name}</strong><span style={{fontSize:12,color:'var(--text-muted)'}}>{r.date}</span></div>
+              <Stars rating={r.rating}/>
+              <p style={{margin:'6px 0 0',fontSize:14.5,color:'var(--text)'}}>{r.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <style>{`@media (max-width:800px){ .wrap > div[style*="grid-template-columns: 1fr 1.3fr"]{display:block;} }`}</style>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   AUTH PAGES
+--------------------------------------------------------- */
+function Login(){
+  const {login} = useUser(); const toast = useToast();
+  const [email,setEmail] = useState(''); const [pass,setPass] = useState(''); const [err,setErr] = useState('');
+  const submit = e=>{
+    e.preventDefault();
+    if(!/^\S+@\S+\.\S+$/.test(email)){ setErr('Format email tidak valid'); return; }
+    if(pass.length<4){ setErr('Kata sandi minimal 4 karakter'); return; }
+    login(email); toast('Berhasil masuk!'); go('profile');
+  };
+  return (
+    <div className="wrap" style={{padding:'50px 20px 70px',maxWidth:400}}>
+      <h1 style={{fontSize:28,marginBottom:4}}>Masuk</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:24,fontSize:14}}>Simulasi login — tidak ada data yang benar-benar diverifikasi ke server.</p>
+      <form onSubmit={submit} className="card" style={{padding:22}}>
+        <div className="field" style={{marginBottom:14}}>
+          <label htmlFor="lg-email">Email</label>
+          <input id="lg-email" type="email" value={email} onChange={e=>setEmail(e.target.value)}/>
+        </div>
+        <div className="field" style={{marginBottom:8}}>
+          <label htmlFor="lg-pass">Kata Sandi</label>
+          <input id="lg-pass" type="password" value={pass} onChange={e=>setPass(e.target.value)}/>
+        </div>
+        {err && <div className="err" style={{marginBottom:10}}>{err}</div>}
+        <a href="#/forgot" style={{fontSize:13,color:'var(--accent)',display:'block',marginBottom:16}}>Lupa kata sandi?</a>
+        <button className="btn btn-primary btn-full" type="submit">Masuk</button>
+        <p style={{textAlign:'center',fontSize:13.5,marginTop:16}}>Belum punya akun? <a href="#/register" style={{color:'var(--accent)',fontWeight:600}}>Daftar</a></p>
+      </form>
+    </div>
+  );
+}
+function Register(){
+  const {register} = useUser(); const toast = useToast();
+  const [form,setForm] = useState({name:'',email:'',pass:''}); const [err,setErr] = useState('');
+  const submit = e=>{
+    e.preventDefault();
+    if(!form.name.trim()){ setErr('Nama wajib diisi'); return; }
+    if(!/^\S+@\S+\.\S+$/.test(form.email)){ setErr('Format email tidak valid'); return; }
+    if(form.pass.length<4){ setErr('Kata sandi minimal 4 karakter'); return; }
+    register(form.name,form.email); toast('Akun berhasil dibuat!'); go('profile');
+  };
+  return (
+    <div className="wrap" style={{padding:'50px 20px 70px',maxWidth:400}}>
+      <h1 style={{fontSize:28,marginBottom:4}}>Buat Akun</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:24,fontSize:14}}>Simulasi pendaftaran untuk keperluan demo.</p>
+      <form onSubmit={submit} className="card" style={{padding:22}}>
+        <div className="field" style={{marginBottom:14}}>
+          <label htmlFor="rg-name">Nama Lengkap</label>
+          <input id="rg-name" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+        </div>
+        <div className="field" style={{marginBottom:14}}>
+          <label htmlFor="rg-email">Email</label>
+          <input id="rg-email" type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
+        </div>
+        <div className="field" style={{marginBottom:8}}>
+          <label htmlFor="rg-pass">Kata Sandi</label>
+          <input id="rg-pass" type="password" value={form.pass} onChange={e=>setForm(f=>({...f,pass:e.target.value}))}/>
+        </div>
+        {err && <div className="err" style={{marginBottom:10}}>{err}</div>}
+        <button className="btn btn-primary btn-full" style={{marginTop:8}} type="submit">Daftar</button>
+        <p style={{textAlign:'center',fontSize:13.5,marginTop:16}}>Sudah punya akun? <a href="#/login" style={{color:'var(--accent)',fontWeight:600}}>Masuk</a></p>
+      </form>
+    </div>
+  );
+}
+function Forgot(){
+  const [email,setEmail] = useState(''); const [sent,setSent] = useState(false);
+  return (
+    <div className="wrap" style={{padding:'50px 20px 70px',maxWidth:400}}>
+      <h1 style={{fontSize:28,marginBottom:4}}>Lupa Kata Sandi</h1>
+      <p style={{color:'var(--text-muted)',marginBottom:24,fontSize:14}}>Simulasi — tidak ada email sungguhan yang dikirim.</p>
+      <div className="card" style={{padding:22}}>
+        {sent ? (
+          <EmptyState icon="📩" title="Instruksi terkirim (simulasi)" desc={`Jika ${email} terdaftar, kami akan mengirim tautan reset.`} action={<a href="#/login" className="btn btn-primary">Kembali ke Login</a>}/>
+        ) : (
+          <form onSubmit={e=>{e.preventDefault(); if(email) setSent(true);}}>
+            <div className="field" style={{marginBottom:16}}>
+              <label htmlFor="fg-email">Email terdaftar</label>
+              <input id="fg-email" type="email" required value={email} onChange={e=>setEmail(e.target.value)}/>
+            </div>
+            <button className="btn btn-primary btn-full" type="submit">Kirim Instruksi</button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   PROFILE
+--------------------------------------------------------- */
+function Profile(){
+  const {user,logout,orders,updateProfile} = useUser(); const toast = useToast();
+  const wish = useWish();
+  const [tab,setTab] = useState('orders');
+  const [address,setAddress] = useState(user?.address||'');
+
+  if(!user){
+    return <div className="wrap" style={{padding:'40px 20px 60px'}}>
+      <EmptyState icon="👤" title="Kamu belum masuk" desc="Masuk untuk melihat profil, riwayat pesanan, dan favoritmu." action={<a href="#/login" className="btn btn-primary">Masuk Sekarang</a>}/>
+    </div>;
+  }
+  const myOrders = orders.filter(o=>o.customer && o.customer.email===user.email || !o.customer);
+  const points = orders.length*10;
+  const favProducts = PRODUCTS.filter(p=>wish.ids.includes(p.id));
+
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:26,flexWrap:'wrap'}}>
+        <div style={{width:64,height:64,borderRadius:99,background:'var(--brand)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,fontWeight:700}}>{user.name[0].toUpperCase()}</div>
+        <div style={{flex:1}}>
+          <h1 style={{fontSize:24,margin:0}}>{user.name}</h1>
+          <p style={{color:'var(--text-muted)',margin:'2px 0 0',fontSize:14}}>{user.email}</p>
+        </div>
+        <span className="badge badge-best">Member · {points} poin</span>
+        <button className="btn btn-outline btn-sm" onClick={()=>{logout();toast('Berhasil keluar');go('home');}}>Keluar</button>
+      </div>
+      <div style={{display:'flex',gap:6,borderBottom:'1px solid var(--line)',marginBottom:22,flexWrap:'wrap'}}>
+        {[['orders','Riwayat Pesanan'],['favorites','Favorit'],['profile','Info Akun']].map(([id,label])=>(
+          <button key={id} onClick={()=>setTab(id)} className="btn btn-ghost btn-sm" style={{borderBottom: tab===id?'2px solid var(--brand)':'2px solid transparent',borderRadius:0,color:tab===id?'var(--text)':'var(--text-muted)',fontWeight:tab===id?700:500}}>{label}</button>
+        ))}
+      </div>
+
+      {tab==='orders' && (
+        myOrders.length===0 ? <EmptyState icon="🧾" title="Belum ada pesanan" desc="Riwayat pesananmu akan muncul di sini." action={<a href="#/menu" className="btn btn-primary">Mulai Pesan</a>}/> : (
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            {myOrders.map(o=>(
+              <a key={o.id} href={`#/tracking/${o.id}`} className="card" style={{padding:16,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:10}}>
+                <div>
+                  <div style={{fontWeight:700}}>{o.id}</div>
+                  <div style={{fontSize:13,color:'var(--text-muted)'}}>{new Date(o.createdAt).toLocaleDateString('id-ID')} · {o.items.length} item</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontWeight:700,color:'var(--brand)'}}>{fmtRp(o.total)}</div>
+                  <div style={{fontSize:12.5,color:'var(--text-muted)'}}>{STATUS_STEPS[o.statusIdx]}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )
+      )}
+
+      {tab==='favorites' && (
+        favProducts.length===0 ? <EmptyState icon="🤍" title="Belum ada favorit" desc="Tap ikon hati pada produk untuk menyimpannya di sini." action={<a href="#/menu" className="btn btn-primary">Jelajahi Menu</a>}/> :
+        <div className="grid-products">{favProducts.map(p=><ProductCard key={p.id} product={p}/>)}</div>
+      )}
+
+      {tab==='profile' && (
+        <div className="card" style={{padding:20,maxWidth:440}}>
+          <div className="field" style={{marginBottom:14}}><label>Nama</label><input value={user.name} onChange={e=>updateProfile({name:e.target.value})}/></div>
+          <div className="field" style={{marginBottom:14}}><label>Email</label><input value={user.email} disabled/></div>
+          <div className="field" style={{marginBottom:14}}>
+            <label>Alamat Tersimpan</label>
+            <textarea rows="2" value={address} onChange={e=>setAddress(e.target.value)}/>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={()=>{updateProfile({address});toast('Profil diperbarui');}}>Simpan Perubahan</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Favorites(){
+  const wish = useWish();
+  const favProducts = PRODUCTS.filter(p=>wish.ids.includes(p.id));
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px'}}>
+      <h1 style={{fontSize:28,marginBottom:20}}>Produk Favorit</h1>
+      {favProducts.length===0 ? <EmptyState icon="🤍" title="Belum ada favorit" desc="Simpan produk yang kamu suka dengan menekan ikon hati." action={<a href="#/menu" className="btn btn-primary">Jelajahi Menu</a>}/> :
+        <div className="grid-products">{favProducts.map(p=><ProductCard key={p.id} product={p}/>)}</div>}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   LOCATION & CONTACT
+--------------------------------------------------------- */
+function LocationPage(){
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:30}}>
+      <div>
+        <h1 style={{fontSize:30,marginBottom:16}}>Lokasi Kami</h1>
+        <div style={{display:'flex',flexDirection:'column',gap:16,color:'var(--text-muted)'}}>
+          <p style={{display:'flex',gap:10}}><Icon name="pin" size={18}/> Jl. Darmo Permai III No. 12, Surabaya, Jawa Timur</p>
+          <p style={{display:'flex',gap:10}}><Icon name="clock" size={18}/> Setiap hari, 07.00 – 22.00 WIB</p>
+          <p>📞 (031) 555-0182</p>
+          <p>✉️ halo@ruangseduh.id</p>
+        </div>
+        <a href="https://maps.google.com" className="btn btn-primary" style={{marginTop:18}}>Dapatkan Petunjuk Arah</a>
+      </div>
+      <div aria-hidden="true" style={{background:'var(--surface-2)',border:'1px solid var(--line)',borderRadius:16,minHeight:280,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text-muted)',flexDirection:'column',gap:8}}>
+        <Icon name="pin" size={30}/>
+        <span style={{fontSize:13}}>Area peta (placeholder embed Google Maps)</span>
+      </div>
+    </div>
+  );
+}
+function ContactPage(){
+  const toast = useToast();
+  const [form,setForm] = useState({name:'',email:'',subject:'',message:''});
+  const [errors,setErrors] = useState({});
+  const [sent,setSent] = useState(false);
+  const submit = e=>{
+    e.preventDefault();
+    const err={};
+    if(!form.name.trim()) err.name='Nama wajib diisi';
+    if(!/^\S+@\S+\.\S+$/.test(form.email)) err.email='Format email tidak valid';
+    if(!form.subject.trim()) err.subject='Subjek wajib diisi';
+    if(!form.message.trim() || form.message.length<10) err.message='Pesan minimal 10 karakter';
+    setErrors(err);
+    if(Object.keys(err).length===0){ setSent(true); toast('Pesan terkirim!'); }
+  };
+  return (
+    <div className="wrap" style={{padding:'32px 20px 60px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:30}}>
+      <div>
+        <h1 style={{fontSize:30,marginBottom:16}}>Hubungi Kami</h1>
+        {sent ? (
+          <EmptyState icon="✅" title="Pesan terkirim" desc="Tim kami akan membalas dalam 1x24 jam." action={<button className="btn btn-outline" onClick={()=>{setSent(false);setForm({name:'',email:'',subject:'',message:''});}}>Kirim Pesan Lain</button>}/>
+        ):(
+        <form onSubmit={submit} className="card" style={{padding:20}}>
+          <div className={`field ${errors.name?'has-err':''}`} style={{marginBottom:12}}>
+            <label htmlFor="ct-name">Nama</label>
+            <input id="ct-name" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+            {errors.name && <div className="err">{errors.name}</div>}
+          </div>
+          <div className={`field ${errors.email?'has-err':''}`} style={{marginBottom:12}}>
+            <label htmlFor="ct-email">Email</label>
+            <input id="ct-email" type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
+            {errors.email && <div className="err">{errors.email}</div>}
+          </div>
+          <div className={`field ${errors.subject?'has-err':''}`} style={{marginBottom:12}}>
+            <label htmlFor="ct-subject">Subjek</label>
+            <input id="ct-subject" value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))}/>
+            {errors.subject && <div className="err">{errors.subject}</div>}
+          </div>
+          <div className={`field ${errors.message?'has-err':''}`} style={{marginBottom:16}}>
+            <label htmlFor="ct-msg">Pesan</label>
+            <textarea id="ct-msg" rows="4" value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))}/>
+            {errors.message && <div className="err">{errors.message}</div>}
+          </div>
+          <button className="btn btn-primary btn-full" type="submit">Kirim Pesan</button>
+        </form>
+        )}
+      </div>
+      <div>
+        <h2 style={{fontSize:20,marginBottom:14}}>Info Kontak</h2>
+        <div style={{display:'flex',flexDirection:'column',gap:14,color:'var(--text-muted)',fontSize:14.5}}>
+          <p>📞 (031) 555-0182</p>
+          <p>✉️ halo@ruangseduh.id</p>
+          <p style={{display:'flex',gap:10}}><Icon name="ig" size={17}/> @ruangseduh.id</p>
+          <p style={{display:'flex',gap:10}}><Icon name="pin" size={17}/> Jl. Darmo Permai III No. 12, Surabaya</p>
+          <p style={{display:'flex',gap:10}}><Icon name="clock" size={17}/> Setiap hari, 07.00 – 22.00 WIB</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   APP SHELL
+--------------------------------------------------------- */
+function Page(){
+  const route = useRoute();
+  const [search,setSearch] = useState('');
+  let content;
+  switch(route.page){
+    case 'home': content = <Home/>; break;
+    case 'menu': content = <Menu search={search} setSearch={setSearch}/>; break;
+    case 'product': content = <ProductDetail id={route.param}/>; break;
+    case 'cart': content = <CartPage/>; break;
+    case 'checkout': content = <Checkout/>; break;
+    case 'tracking': content = <Tracking id={route.param}/>; break;
+    case 'promo': content = <PromoPage/>; break;
+    case 'about': content = <About/>; break;
+    case 'blog': content = route.param ? <BlogDetail id={route.param}/> : <Blog/>; break;
+    case 'reviews': content = <ReviewsPage/>; break;
+    case 'login': content = <Login/>; break;
+    case 'register': content = <Register/>; break;
+    case 'forgot': content = <Forgot/>; break;
+    case 'profile': content = <Profile/>; break;
+    case 'favorites': content = <Favorites/>; break;
+    case 'location': content = <LocationPage/>; break;
+    case 'contact': content = <ContactPage/>; break;
+    default: content = <Home/>;
+  }
+  return (
+    <>
+      <NavBar search={search} setSearch={setSearch}/>
+      <main style={{flex:1}}>{content}</main>
+      <Footer/>
+    </>
+  );
+}
+
+function App(){
+  return (
+    <ToastProvider>
+      <UserProvider>
+        <CartProvider>
+          <WishProvider>
+            <Page/>
+          </WishProvider>
+        </CartProvider>
+      </UserProvider>
+    </ToastProvider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
